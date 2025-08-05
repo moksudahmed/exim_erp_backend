@@ -11,7 +11,7 @@ app = FastAPI()
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["https://haquebrothers.onrender.com"],  # React frontend origin
+    allow_origins=["http://localhost:3000"],  # React frontend origin
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -53,6 +53,6 @@ def read_root():
 # ------------------------------
 # For Local Testing
 # ------------------------------
-"""if __name__ == "__main__":
+if __name__ == "__main__":
     import uvicorn
-    uvicorn.run("main:app", host="0.0.0.0", port=10000, reload=True)"""
+    uvicorn.run("main:app", host="0.0.0.0", port=10000, reload=True)
