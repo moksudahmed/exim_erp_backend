@@ -20,4 +20,5 @@ class Client(Base):
     business = relationship("Business", back_populates="clients")
     sales = relationship("Sale", back_populates="clients")
     purchase_order = relationship("PurchaseOrder", back_populates="clients")
+    person = relationship("Person", back_populates="clients")
 #    letter_of_credit = relationship("LetterOfCredit", back_populates="clients")

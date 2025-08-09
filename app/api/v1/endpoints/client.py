@@ -9,6 +9,7 @@ from app.db.session import get_db
 from app.models.client import Client
 from app.schemas.client import ClientResponse, ClientCreate
 from sqlalchemy.future import select
+from sqlalchemy.orm import selectinload
 from app.models import person as person_model, client as client_model, subsidiary_account as sa_model
 from app.schemas import person as person_schema, client as client_schema, subsidiary_account as sa_schema
 from app.schemas.client import ClientList
@@ -441,12 +442,66 @@ async def read_transactions(skip: int = 0, limit: int = 100, db: AsyncSession = 
     account = result.scalars().all()
     return account
 
-@router.get("/{client_id}", response_model=ClientResponse)
-def get_client(client_id: int, db: Session = Depends(get_db)):
-    client = db.query(Client).filter(Client.client_id == client_id).first()
+@router.get("/test/{client_id}", response_model=ClientResponse)
+async def get_client2(client_id: int, db: AsyncSession = Depends(get_db)):
+    """
+    Retrieve a client by ID, including related Person and SubsidiaryAccount data.
+    """
+    result = await db.execute(
+        select(client_model.Client)
+        .options(
+            selectinload(client_model.Client.person),                # Eager load Person
+            selectinload(client_model.Client.subsidiary_accounts)    # Eager load Subsidiary Accounts
+        )
+        .where(client_model.Client.client_id == client_id)
+    )
+
+    client = result.scalars().first()
+
     if not client:
         raise HTTPException(status_code=404, detail="Client not found")
+
     return client
+@router.get("/{client_id}", response_model=ClientList)
+async def get_client(client_id: int, db: AsyncSession = Depends(get_db)):
+    query = text("""
+        SELECT 
+          p.person_id, 
+          p.title, 
+          p.first_name, 
+          p.last_name, 
+          p.contact_no, 
+          p.gender, 
+          c.client_id, 
+          c.client_type, 
+          c.registration_date, 
+          s.subsidiary_account_id, 
+          s.account_id, 
+          s.account_name, 
+          s.account_no, 
+          s.address, 
+          s.branch, 
+          s.account_holder, 
+          s.type
+        FROM 
+          public.person p
+        JOIN 
+          public.client c ON p.person_id = c.person_id
+        JOIN 
+          public.subsidiary_account s ON c.client_id = s.client_id
+        WHERE 
+          c.client_id = :client_id
+    """)
+
+    result = await db.execute(query, {"client_id": client_id})
+    client = result.mappings().first()  # ✅ Returns dict-like object
+
+    if not client:
+        raise HTTPException(status_code=404, detail="Client not found")
+
+    return dict(client)  # ✅ Convert to normal dict so Pydantic can parse
+
+
 """
 @router.put("/{client_id}", response_model=ClientResponse)
 def update_client(client_id: int, client_data: ClientUpdate, db: Session = Depends(get_db)):
