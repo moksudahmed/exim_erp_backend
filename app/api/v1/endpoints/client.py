@@ -399,6 +399,7 @@ async def fetch_customer_payment_info(client_id: int, db: AsyncSession = Depends
     result = await db.execute(stmt)
     records = result.fetchall()
     return [dict(row._mapping) for row in records]
+
 @router.get("/supplier-payments/{client_id}")
 async def fetch_supplier_payment_info(client_id: int, db: AsyncSession = Depends(get_db)):
     stmt = (
