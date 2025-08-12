@@ -72,7 +72,61 @@ async def create_client_entry(
         "subsidiary_account_id": new_account.subsidiary_account_id
     }
 
+# Update an account by ID
+@router.put("/{client_id}", status_code=200)
+async def update_client(
+    client_id: int,
+    person: person_schema.PersonUpdate,
+   # client: client_schema.ClientUpdate,
+    account: sa_schema.SubsidiaryAccountUpdate,
+    db: AsyncSession = Depends(get_db)
+):
+    # Fetch the client record
+    result = await db.execute(
+        select(client_model.Client).where(client_model.Client.client_id == client_id)
+    )
+    existing_client = result.scalar_one_or_none()
+    if not existing_client:
+        raise HTTPException(status_code=404, detail="Client not found")
 
+    # Fetch the related person record
+    result = await db.execute(
+        select(person_model.Person).where(person_model.Person.person_id == existing_client.person_id)
+    )
+    existing_person = result.scalar_one_or_none()
+    if not existing_person:
+        raise HTTPException(status_code=404, detail="Person record not found")
+
+    # Fetch the related subsidiary account
+    result = await db.execute(
+        select(sa_model.SubsidiaryAccount).where(sa_model.SubsidiaryAccount.client_id == client_id)
+    )
+    existing_account = result.scalar_one_or_none()
+    if not existing_account:
+        raise HTTPException(status_code=404, detail="Subsidiary account not found")
+
+    # Update person
+    for key, value in person.dict(exclude_unset=True).items():
+        setattr(existing_person, key, value)
+
+    # Update client
+    #for key, value in client.dict(exclude_unset=True).items():
+     #   setattr(existing_client, key, value)
+
+    # Update subsidiary account
+    for key, value in account.dict(exclude_unset=True).items():
+        setattr(existing_account, key, value)
+
+    await db.commit()
+
+    return {
+        "message": "Client, person, and account updated successfully.",
+       # "client_id": existing_client.client_id,
+        "person_id": existing_person.person_id,
+        "subsidiary_account_id": existing_account.subsidiary_account_id
+    }
+
+   
 @router.get("/list", response_model=List[ClientList])
 async def get_client_list(db: AsyncSession = Depends(get_db)):
     query = text("""

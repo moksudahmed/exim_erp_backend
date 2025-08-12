@@ -15,6 +15,12 @@ class PersonBase(BaseModel):
 class PersonCreate(PersonBase):
     pass
 
+class PersonUpdate(BaseModel):
+    title: Optional[str]
+    first_name: str
+    last_name: str
+    contact_no: Optional[str]    
+
 class PersonResponse(PersonBase):
     person_id: int
     class Config:
