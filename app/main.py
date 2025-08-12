@@ -11,7 +11,7 @@ app = FastAPI()
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["https://exim-erp-backend-1.onrender.com"],  # React frontend origin
+    allow_origins=["https://haquebrothers.onrender.com"],  # React frontend origin
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
