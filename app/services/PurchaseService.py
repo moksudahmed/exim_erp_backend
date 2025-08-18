@@ -31,7 +31,10 @@ class PurchaseService:
                 date=order_data.date,
                 total_amount=Decimal(order_data.total_amount),
                 status=order_data.status,
-                user_id=order_data.user_id
+                user_id=order_data.user_id,
+                branch_id=order_data.branch_id,
+                measurement=order_data.measurement,
+                measurement_value=order_data.measurement_value
             )
             self.db.add(new_order)
             await self.db.flush()
@@ -93,7 +96,8 @@ class PurchaseService:
                 date=order_data.date,
                 total_amount=Decimal(order_data.total_amount),
                 status=OrderStatusEnum.PAID,
-                user_id=order_data.user_id
+                user_id=order_data.user_id,
+                measurement=order_data.measurement
             )
             self.db.add(new_order)
             await self.db.flush()

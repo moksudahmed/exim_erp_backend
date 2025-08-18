@@ -1,6 +1,7 @@
 from sqlalchemy import Column, Integer, String, Float, Date, ForeignKey, Enum as SQLAlchemyEnum
 from sqlalchemy import Column, Integer, String, Float, Boolean, DateTime, Enum, ForeignKey, Text, Numeric
 from sqlalchemy.orm import relationship
+from sqlalchemy.orm import relationship, Mapped, mapped_column
 from datetime import date
 from app.models.enum_types import OrderStatusEnum
 from app.db.base import Base
@@ -14,6 +15,11 @@ class PurchaseOrder(Base):
     status = Column(Enum(OrderStatusEnum, name="order_status"), nullable=False)    
     user_id = Column(Integer, ForeignKey("users.id", ondelete="SET NULL"))
     clients = relationship("Client", back_populates="purchase_order")
-    items = relationship("PurchaseOrderItem", back_populates="purchase_order")    
+    branch_id: Mapped[int | None] = mapped_column(ForeignKey('branch.id'), nullable=True)
+    measurement= Column(String(255), nullable=False, index=True)
+    measurement_value= Column(Float, nullable=False)
+    
+    items = relationship("PurchaseOrderItem", back_populates="purchase_order")
+    branches = relationship("Branch", back_populates="purchase_order")    
     #accounts_payable = relationship("AccountsPayable", back_populates="purchase_order", uselist=False)    
     payments = relationship("Payment", back_populates="purchase_order")

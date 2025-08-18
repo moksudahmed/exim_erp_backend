@@ -44,6 +44,9 @@ class PurchaseOrderBase(BaseModel):
     total_amount: Optional[Decimal]
     status: Optional[OrderStatusEnum]
     user_id: Optional[int]
+    branch_id: Optional[int]
+    measurement: Optional[str] = None
+    measurement_value:  Optional[Decimal]
 
     class Config:
         orm_mode = True
@@ -55,6 +58,9 @@ class PurchaseOrderCreate(PurchaseOrderBase):
     status: Optional[OrderStatusEnum]
     user_id: Optional[int]
     items: List[PurchaseOrderItemBase]
+    branch_id: Optional[int]
+    measurement: Optional[str]
+    measurement_value:  Optional[Decimal]
 
     class Config:
         orm_mode = True
@@ -66,6 +72,9 @@ class PurchaseOrderResponse(PurchaseOrderBase):
     total_amount: Decimal
     status: OrderStatusEnum
     items: List[PurchaseOrderItemResponse]
+    branch_id: Optional[int]
+    measurement: Optional[str]
+    measurement_value:  Optional[Decimal]
 
     class Config:
         orm_mode = True
@@ -86,5 +95,8 @@ class PurchaseOrder(BaseModel):
     status: OrderStatusEnum
     items: List[PurchaseOrderItem]
     user_id: int
+    branch_id: Optional[int]
+    measurement: Optional[str]
+    measurement_value:  Optional[Decimal]
     class Config:
         orm_mode = True

@@ -21,5 +21,6 @@ class Branch(Base):
     
     business = relationship("Business", back_populates="branches")
     user = relationship("User", back_populates="branches")
-    
+    purchase_order = relationship("PurchaseOrder", back_populates="branches")
+
     #manager = relationship("User", back_populates="managed_branches")
