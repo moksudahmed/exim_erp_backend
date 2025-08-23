@@ -24,7 +24,7 @@ class PurchaseService:
         """Handles credit purchase orders: records purchase, payment, journals and ledger"""
         try:
             sub_account_id = await self.get_subsidiary_account(order_data.client_id)
-
+            
             # Create purchase order
             new_order = PurchaseOrder(
                 client_id=order_data.client_id,
@@ -32,9 +32,7 @@ class PurchaseService:
                 total_amount=Decimal(order_data.total_amount),
                 status=order_data.status,
                 user_id=order_data.user_id,
-                branch_id=order_data.branch_id,
-                measurement=order_data.measurement,
-                measurement_value=order_data.measurement_value
+                branch_id=order_data.branch_id                
             )
             self.db.add(new_order)
             await self.db.flush()
@@ -45,9 +43,12 @@ class PurchaseService:
                     product_id=item.product_id,
                     quantity=item.quantity,
                     cost_per_unit=item.cost_per_unit,
-                    purchase_order_id=new_order.id
+                    purchase_order_id=new_order.id,
+                    quality_type=item.quality_type,
+                    measurement_type=item.measurement_type,
+                    measurement_value=item.measurement_value
                 ))
-
+                
             # Record payment (credit)
             payment_data = Payment(
                 business_id=1,

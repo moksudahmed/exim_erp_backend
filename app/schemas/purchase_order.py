@@ -4,6 +4,8 @@ from datetime import date
 from decimal import Decimal
 from enum import Enum
 from app.models.enum_types import OrderStatusEnum
+from app.models.enum_types import ProductTypeEnum, UnitOfMeasurement, ProductSubCategory
+
 
 class VendorBase(BaseModel):
     name: str
@@ -21,6 +23,10 @@ class PurchaseOrderItemBase(BaseModel):
     product_id: Optional[int]
     quantity: Optional[int]
     cost_per_unit: Optional[Decimal]
+    quality_type: Optional[str]
+    measurement_type: Optional[str]
+    measurement_value: Optional[Decimal]
+ 
     class Config:
         orm_mode = True
 
@@ -33,6 +39,9 @@ class PurchaseOrderItemResponse(PurchaseOrderItemBase):
     product_id: Optional[int]
     quantity: Optional[int]
     cost_per_unit: Optional[Decimal]
+    quality_type: Optional[str]
+    measurement_type: Optional[str]
+    measurement_value: Optional[Decimal]
 
     class Config:
         orm_mode = True
@@ -45,9 +54,7 @@ class PurchaseOrderBase(BaseModel):
     status: Optional[OrderStatusEnum]
     user_id: Optional[int]
     branch_id: Optional[int]
-    measurement: Optional[str] = None
-    measurement_value:  Optional[Decimal]
-
+    
     class Config:
         orm_mode = True
 
@@ -59,9 +66,7 @@ class PurchaseOrderCreate(PurchaseOrderBase):
     user_id: Optional[int]
     items: List[PurchaseOrderItemBase]
     branch_id: Optional[int]
-    measurement: Optional[str]
-    measurement_value:  Optional[Decimal]
-
+    
     class Config:
         orm_mode = True
 
@@ -73,9 +78,7 @@ class PurchaseOrderResponse(PurchaseOrderBase):
     status: OrderStatusEnum
     items: List[PurchaseOrderItemResponse]
     branch_id: Optional[int]
-    measurement: Optional[str]
-    measurement_value:  Optional[Decimal]
-
+    
     class Config:
         orm_mode = True
 
@@ -83,6 +86,9 @@ class PurchaseOrderItem(BaseModel):
     product_id: int
     quantity: int
     cost_per_unit: Decimal
+    quality_type: Optional[str]
+    measurement_type: Optional[str]
+    measurement_value: Optional[Decimal]
 
     class Config:
         orm_mode = True
@@ -96,7 +102,6 @@ class PurchaseOrder(BaseModel):
     items: List[PurchaseOrderItem]
     user_id: int
     branch_id: Optional[int]
-    measurement: Optional[str]
-    measurement_value:  Optional[Decimal]
+    
     class Config:
         orm_mode = True

@@ -16,8 +16,6 @@ class PurchaseOrder(Base):
     user_id = Column(Integer, ForeignKey("users.id", ondelete="SET NULL"))
     clients = relationship("Client", back_populates="purchase_order")
     branch_id: Mapped[int | None] = mapped_column(ForeignKey('branch.id'), nullable=True)
-    measurement= Column(String(255), nullable=False, index=True)
-    measurement_value= Column(Float, nullable=False)
     
     items = relationship("PurchaseOrderItem", back_populates="purchase_order")
     branches = relationship("Branch", back_populates="purchase_order")    
